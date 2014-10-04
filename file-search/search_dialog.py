@@ -165,6 +165,7 @@ class SearchDialog:
             self._lastTypes.add(u'*')
 
         self._lastDir = None
+        self._lastSearchText = ""
         self._autoCompleteList = None
 
     def initGSettings(self):
@@ -235,7 +236,7 @@ class SearchDialog:
         # TODO: the algorithm to select a good default search dir could probably be improved...
 
         if searchText == None:
-            searchText = ""
+            searchText = self._lastSearchText
             if self._window.get_active_tab():
                 currDoc = self._window.get_active_document()
                 selectionIters = currDoc.get_selection_bounds()
@@ -243,6 +244,7 @@ class SearchDialog:
                     # Only use selected text if it doesn't span multiple lines:
                     if selectionIters[0].get_line() == selectionIters[1].get_line():
                         searchText = selectionIters[0].get_text(selectionIters[1])
+                        self._lastSearchText = searchText
         self.builder.get_object('cboSearchTextEntry').set_text(searchText)
 
         cboLastSearches = self.builder.get_object('cboSearchTextList')

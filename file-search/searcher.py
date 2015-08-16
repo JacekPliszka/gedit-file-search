@@ -70,7 +70,9 @@ class RunCommand:
         self.lineSplitter = LineSplitter(resultHandler)
 
         #print("executing command: %s" % cmd)
-        self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True)
+        env = os.environ.copy()
+        env['LC_ALL'] = 'C'
+        self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=True, env=env)
         self.pipe = self.proc.stdout
 
         # make pipe non-blocking:

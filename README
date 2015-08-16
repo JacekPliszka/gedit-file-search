@@ -12,6 +12,7 @@ Installation
 * download the plugin [1]
 * unpack the tgz file
 * copy the contents of the gedit-file-search folder to ~/.local/share/gedit/plugins/ (create that folder if necessary)
+* in file-search directory run glib-compile-schemas .
 * start Gedit, go to Edit -> Preferences -> Plugins, and enable "File Search"
 
   [1]: https://github.com/oliver/gedit-file-search/releases

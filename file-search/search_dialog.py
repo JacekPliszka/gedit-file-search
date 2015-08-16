@@ -234,7 +234,7 @@ class SearchDialog:
 
         # TODO: the algorithm to select a good default search dir could probably be improved...
 
-        if searchText == None:
+        if searchText is None:
             searchText = ""
             if self._window.get_active_tab():
                 currDoc = self._window.get_active_document()

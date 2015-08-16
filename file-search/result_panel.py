@@ -55,11 +55,16 @@ class ResultPanel:
         self.searchProcess = None
         self._collapseAll = False # if true, new nodes will be displayed collapsed
 
+        self._catchStyleSchemes()
         self._createResultPanel()
         self._updateSummary()
 
-        searchSummary = "<span size=\"smaller\">" + \
-            _("searching for <i>%(keywords)s</i> in <i>%(folder)s</i>") % \
+        searchSummary = '<span foreground="%(fg_col)s" background="%(bg_col)s" size="smaller">' % \
+                {
+                    'fg_col': self.comment_fg,
+                    'bg_col': self.comment_bg
+                } + \
+            _("searching for '<i>%(keywords)s</i>' in <i>%(folder)s</i>") % \
                 {
                     'keywords': escapeMarkup(query.text),
                     'folder': escapeMarkup(GLib.filename_display_name(query.directory))
@@ -70,6 +75,73 @@ class ResultPanel:
 
         self.searchProcess = SearchProcess(query, self)
         self._updateSummary()
+
+    def _catchStyleSchemes (self):
+        self.text_fg = None
+        self.text_bg = None
+        self.search_match_fg = None
+        self.search_match_bg = None
+        self.comment_fg = None
+        self.comment_bg = None
+        self.lineno_fg = None
+        self.lineno_bg = None
+        self.filename_fg = None
+        self.filename_bg = None
+
+        schemes = self._window.get_active_tab().get_document().get_style_scheme()
+        try:
+          style = schemes.get_style('text')
+          self.text_fg, self.text_bg = style.get_properties('foreground', 'background')
+        except Exception as e:
+          print ('Warning:', __file__, type(e), e)
+
+        try:
+          style = schemes.get_style('search-match')
+          self.search_match_fg, self.search_match_bg = style.get_properties('foreground', 'background')
+        except:
+          pass
+
+        try:
+          style = schemes.get_style('def:comment')
+          self.comment_fg, self.comment_bg = style.get_properties('foreground', 'background')
+        except:
+          pass
+
+        try:
+          style = schemes.get_style('line-numbers')
+          self.lineno_fg, self.lineno_bg = style.get_properties('foreground', 'background')
+        except:
+          pass
+
+        try:
+          style = schemes.get_style('def:constant')
+          self.filename_fg, self.filename_bg = style.get_properties('foreground', 'background')
+        except:
+          pass
+
+        # Default values in case style is inconsistent
+        if self.text_fg is None or self.text_bg is None:
+          self.text_fg = "black"
+          self.text_bg = "white"
+
+        if self.search_match_fg is None or self.search_match_bg is None:
+          self.search_match_fg = "yellow"
+          self.search_match_bg = "black"
+
+        if self.comment_fg is None:
+            self.comment_fg = self.text_fg
+        if self.comment_bg is None:
+            self.comment_bg = self.text_bg
+
+        if self.lineno_fg is None:
+            self.lineno_fg = self.text_fg
+        if self.lineno_bg is None:
+            self.lineno_bg = self.text_bg
+
+        if self.filename_fg is None:
+            self.filename_fg = self.text_fg
+        if self.filename_bg is None:
+            self.filename_bg = self.text_bg
 
     def _createResultPanel (self):
         self.builder = Gtk.Builder()
@@ -96,10 +168,10 @@ class ResultPanel:
 
         panel.set_property("visible", True)
 
-
         self.treeStore = Gtk.TreeStore(str, object, int) # markup, file name, line number
         self.treeView = self.builder.get_object('tvFileSearchResult')
         self.treeView.set_model(self.treeStore)
+        self.treeView.modify_bg(Gtk.StateFlags.NORMAL, Gdk.color_parse(self.text_bg))
 
         self.treeView.set_search_equal_func(resultSearchCb, None)
 
@@ -174,9 +246,10 @@ class ResultPanel:
         elif self.numMatches == 0:
             line = "<i>" + _("(no matching files found)") + "</i>"
         else:
-            line = "<i>" + ngettext("found %d match", "found %d matches", self.numMatches) % self.numMatches
+            line = '<span foreground="%s">' % self.comment_fg
+            line += "<i>" + ngettext("found %d match", "found %d matches", self.numMatches) % self.numMatches
             line += ngettext(" (%d line)", " (%d lines)", self.numLines) % self.numLines
-            line += ngettext(" in %d file", " in %d files", len(self.files)) % len(self.files) + "</i>"
+            line += ngettext(" in %d file", " in %d files", len(self.files)) % len(self.files) + "</i></span>"
         it = self.treeStore.append(None, None)
         self.treeStore.set(it, 0, line, 1, "", 2, 0)
 
@@ -200,7 +273,8 @@ class ResultPanel:
         if directory:
             directory = os.path.normpath(directory) + "/"
 
-        line = "%s<b>%s</b>" % (escapeMarkup(directory), escapeMarkup(file))
+        line  = '<span foreground="%s" background="%s">' % (self.filename_fg, self.filename_bg)
+        line += "%s<b>%s</b></span>" % (escapeMarkup(directory), escapeMarkup(file))
         it = self.treeStore.append(None, None)
         self.treeStore.set(it, 0, line, 1, filename, 2, 0)
         return it
@@ -215,7 +289,7 @@ class ResultPanel:
         linetext = linetext.replace('\0', u'\uFFFD') # Pango can't handle NULL bytes in markup
 
         if not(self.query.isRegExp):
-            (linetext, numLineMatches) = escapeAndHighlight(linetext, self.query.text, self.query.caseSensitive, self.query.wholeWord)
+            (linetext, numLineMatches) = escapeAndHighlight(linetext, self.query.text, self.query.caseSensitive, self.query.wholeWord, self.search_match_fg, self.search_match_bg)
             self.numMatches += numLineMatches
         else:
             linetext = escapeMarkup(linetext)
@@ -224,7 +298,8 @@ class ResultPanel:
 
         if addTruncationMarker:
             linetext += "</span><span size=\"smaller\"><i> [...]</i>"
-        line = "<b>%d:</b> <span foreground=\"blue\">%s</span>" % (lineno, linetext)
+        line = '<span foreground="%s" background="%s"><b>%d:</b></span>' % (self.lineno_fg, self.lineno_bg, lineno)
+        line += '<span foreground="%s">%s</span>' % (self.text_fg, linetext)
         newIt = self.treeStore.append(it, None)
         self.treeStore.set(newIt, 0, line, 2, lineno)
 
@@ -359,7 +434,7 @@ def escapeMarkup (origText):
     text = text.replace('>', '&gt;')
     return text
 
-def escapeAndHighlight (origText, searchText, caseSensitive, wholeWord):
+def escapeAndHighlight (origText, searchText, caseSensitive, wholeWord, fg_col, bg_col):
     """
     Replaces Pango markup special characters, and adds highlighting markup
     around text fragments that match searchText.
@@ -400,7 +475,7 @@ def escapeAndHighlight (origText, searchText, caseSensitive, wholeWord):
     for f in fragments:
         f = escapeMarkup(f)
         if highLight:
-            retText += "<span background=\"#FFFF00\">%s</span>" % f
+            retText += '<span foreground="%s" background="%s">%s</span>' % (fg_col, bg_col, f)
         else:
             retText += f
         highLight = not(highLight)

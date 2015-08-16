@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: File Search\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-13 19:03+0200\n"
+"POT-Creation-Date: 2014-10-04 14:28+0200\n"
 "PO-Revision-Date: 2011-05-18 16:40-0400\n"
 "Last-Translator: Jean-Philippe Fleury <contact@jpfleury.net>\n"
 "Language-Team: \n"
@@ -119,70 +119,70 @@ msgstr "Recherche dans tous les fichiers d'un dossier"
 msgid "Search files for \"%s\""
 msgstr "Rechercher des fichiers contenant \"%s\""
 
-#: file-search/search_dialog.py:297
+#: file-search/search_dialog.py:299
 msgid "Directory does not exist"
 msgstr "Le dossier n'existe pas"
 
-#: file-search/search_dialog.py:298
+#: file-search/search_dialog.py:300
 msgid "The specified directory does not exist."
 msgstr "Le dossier spécifié n'existe pas."
 
-#: file-search/search_dialog.py:371
+#: file-search/search_dialog.py:373
 msgid "Select Directory"
 msgstr "Sélectionner un dossier"
 
-#: file-search/result_panel.py:62
+#: file-search/result_panel.py:66
 #, python-format
-msgid "searching for <i>%(keywords)s</i> in <i>%(folder)s</i>"
-msgstr "recherche de <i>%(keywords)s</i> dans <i>%(folder)s</i>"
+msgid "searching for '<i>%(keywords)s</i>' in <i>%(folder)s</i>"
+msgstr "recherche de '<i>%(keywords)s</i>' dans <i>%(folder)s</i>"
 
-#: file-search/result_panel.py:173
+#: file-search/result_panel.py:244
 msgid "(search was cancelled)"
 msgstr "(la recherche a été arrêtée)"
 
-#: file-search/result_panel.py:175
+#: file-search/result_panel.py:246
 msgid "(no matching files found)"
 msgstr "(aucun fichier correspondant n'a été trouvé)"
 
-#: file-search/result_panel.py:177
+#: file-search/result_panel.py:249
 #, python-format
 msgid "found %d match"
 msgid_plural "found %d matches"
 msgstr[0] "%d occurrence trouvée"
 msgstr[1] "%d occurrences trouvées"
 
-#: file-search/result_panel.py:178
+#: file-search/result_panel.py:250
 #, python-format
 msgid " (%d line)"
 msgid_plural " (%d lines)"
 msgstr[0] " (%d ligne)"
 msgstr[1] " (%d lignes)"
 
-#: file-search/result_panel.py:179
+#: file-search/result_panel.py:251
 #, python-format
 msgid " in %d file"
 msgid_plural " in %d files"
 msgstr[0] " dans %d fichier"
 msgstr[1] " dans %d fichiers"
 
-#: file-search/result_panel.py:184
+#: file-search/result_panel.py:256
 #, python-format
 msgid "<b>%d</b> match"
 msgid_plural "<b>%d</b> matches"
 msgstr[0] "<b>%d</b> occurrence"
 msgstr[1] "<b>%d</b> occurrences"
 
-#: file-search/result_panel.py:185
+#: file-search/result_panel.py:257
 #, python-format
 msgid "in %d file"
 msgid_plural "in %d files"
 msgstr[0] "dans %d fichier"
 msgstr[1] "dans %d fichiers"
 
-#: file-search/result_panel.py:299
+#: file-search/result_panel.py:373
 msgid "Expand All"
 msgstr "Tout développer"
 
-#: file-search/result_panel.py:304
+#: file-search/result_panel.py:378
 msgid "Collapse All"
 msgstr "Tout réduire"
